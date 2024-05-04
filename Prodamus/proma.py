@@ -1,8 +1,10 @@
+""" Временный, Не используется!!!
+ Взят из https://pypi.org/project/prodamuspy/ для базы
+"""
+
 import prodamuspy
 
-
 API_TOKEN = "aaaa"
-
 
 # Init object:
 

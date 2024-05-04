@@ -1,14 +1,30 @@
+"""
+  Реализация "Формирования ссылки для оплаты".
+  Бывший файл working.py, сделанный Святославом.
+"""
+import os
 from collections.abc import MutableMapping
 from urllib.parse import urlencode
+
+from dotenv import load_dotenv
+
+# Загрузка переменных среды из .env файла
+load_dotenv("../.env")
+
+SECRET_KEY_PAYMENT = os.getenv("SECRET_KEY_PAYMENT")  # Секретный ключ для оплаты
+URL_RETURN = os.getenv("URL_RETURN")  # Пока не используем!!!
+URL_SUCCESS = os.getenv("URL_SUCCESS")  # Пока не используем!!!
+URL_NOTIFICATION = os.getenv("URL_SUCCESS")  # URL для уведомления об оплате
 
 
 def generate_payment_link():
     # URL платежной формы
-    linktoform = 'https://volynets.payform.ru/'
+    linktoform: str = 'https://volynets.payform.ru/'
 
     # Секретный ключ. Можно найти на странице настроек,
     # в личном кабинете платежной формы
-    secret_key = 'b635e5ee4d74271eb64926ebb07f71dd0194ac01ab490577d9035d12e5c813b2'
+    # secret_key = 'b635..........13b2'
+    # Перенесо в начало файла "SECRET_KEY_PAYMENT", загрузка из окружения .env
 
     data = {
         # хххх - номер заказ в системе интернет-магазина
@@ -114,18 +130,22 @@ def generate_payment_link():
 
         #  url-адрес для возврата пользователя без оплаты
         #    (при необходимости прописать свой адрес)
-        'urlReturn': 'https://demo.payform.ru/demo-return',
+        # 'urlReturn': 'https://demo.payform.ru/demo-return',
+        'urlReturn': 'https://a1f8-178-204-220-54.ngrok-free.app/payment',
 
         # url-адрес для возврата пользователя при успешной оплате
         #    (при необходимости прописать свой адрес)
-        'urlSuccess': 'https://demo.payform.ru/demo-success',
+        # 'urlSuccess': 'https://demo.payform.ru/demo-success',
+        # 'urlSuccess': URL_SUCCESS,
+        'urlSuccess': 'https://a1f8-178-204-220-54.ngrok-free.app/payment',
 
         #  служебный url-адрес для уведомления интернет-магазина
         #            о поступлении оплаты по заказу
         #  	         пока реализован только для Advantshop,
         #            формат данных настроен под систему интернет-магазина
         #            (при необходимости прописать свой адрес)
-        'urlNotification': 'https://demo.payform.ru/demo-notification',
+        # 'urlNotification': 'https://demo.payform.ru/demo-notification',
+        'urlNotification': 'https://a1f8-178-204-220-54.ngrok-free.app/payment',
 
         #  код системы интернет-магазина, запросить у поддержки,
         #      для самописных систем можно оставлять пустым полем
@@ -185,7 +205,7 @@ def generate_payment_link():
     }
 
     # подписываем с помощью кастомной функции sign (см ниже)
-    data['signature'] = sign(data, secret_key)
+    data['signature'] = sign(data, SECRET_KEY_PAYMENT)
     # компануем ссылку с помощью кастомной функции http_build_query (см ниже)
     link = linktoform + '?' + urlencode(http_build_query(data))
 
@@ -200,7 +220,7 @@ def sign(data, secret_key):
     # переводим все значения data в string c помощью кастомной функции deep_int_to_string (см ниже)
     deep_int_to_string(data)
 
-    # переводим data в JSON, с сортировкой ключей в алфавитном порядке, без пробелом и экранируем бэкслеши
+    # переводим data в JSON, с сортировкой ключей в алфавитном порядке, без пробелов и экранируем бэкслеши
     data_json = json.dumps(data, sort_keys=True, ensure_ascii=False, separators=(',', ':')).replace("/", "\\/")
 
     # создаем подпись с помощью библиотеки hmac и возвращаем ее
@@ -231,4 +251,7 @@ def http_build_query(dictionary, parent_key=False):
             items.append((new_key, value))
     return dict(items)
 
-print(generate_payment_link())
+
+generated_payment_link = generate_payment_link()
+print(generated_payment_link)
+

@@ -1,3 +1,5 @@
+""" Временный, Не используется!!! """
+
 import hashlib
 import hmac
 

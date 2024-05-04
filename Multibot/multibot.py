@@ -3,6 +3,7 @@ import sys
 from os import getenv
 from typing import Any, Dict, Union
 
+from aiogram.client.default import DefaultBotProperties
 from aiohttp import web
 from finite_state_machine import form_router  # form_router = Router()
 
@@ -19,17 +20,21 @@ from aiogram.webhook.aiohttp_server import (
     TokenBasedRequestHandler,
     setup_application,
 )
+from dotenv import load_dotenv
+
+load_dotenv("../.env")
 
 main_router = Router()
 
 BASE_URL = getenv("BASE_URL", "https://example.com")
-MAIN_BOT_TOKEN = getenv("BOT_TOKEN")
+MAIN_BOT_TOKEN = getenv("MAIN_BOT_TOKEN")  # Получение токена бота
 
 WEB_SERVER_HOST = "127.0.0.1"
 WEB_SERVER_PORT = 8080
 MAIN_BOT_PATH = "/webhook/main"
 OTHER_BOTS_PATH = "/webhook/bot/{bot_token}"
-REDIS_DSN = "redis://127.0.0.1:6479"
+REDIS_DSN = "redis://127.0.0.1:6379"
+# REDIS_DSN = "redis://127.0.0.1:6479"
 
 OTHER_BOTS_URL = f"{BASE_URL}{OTHER_BOTS_PATH}"
 
@@ -60,9 +65,10 @@ async def on_startup(dispatcher: Dispatcher, bot: Bot):
 
 def main():
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-    session = AiohttpSession()
-    bot_settings = {"session": session, "parse_mode": ParseMode.HTML}
-    bot = Bot(token=MAIN_BOT_TOKEN, **bot_settings)
+    bot = Bot(MAIN_BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    # session = AiohttpSession()
+    # bot_settings = {"session": session, "parse_mode": ParseMode.HTML}
+    # bot = Bot(token=MAIN_BOT_TOKEN, **bot_settings)
     storage = MemoryStorage()
     # In order to use RedisStorage you need to use Key Builder with bot ID:
     # storage = RedisStorage.from_url(REDIS_DSN, key_builder=DefaultKeyBuilder(with_bot_id=True))
@@ -78,7 +84,7 @@ def main():
     SimpleRequestHandler(dispatcher=main_dispatcher, bot=bot).register(app, path=MAIN_BOT_PATH)
     TokenBasedRequestHandler(
         dispatcher=multibot_dispatcher,
-        bot_settings=bot_settings,
+        # bot_settings=bot_settings,
     ).register(app, path=OTHER_BOTS_PATH)
 
     setup_application(app, main_dispatcher, bot=bot)
@@ -91,3 +97,41 @@ if __name__ == "__main__":
     main()
 
 
+# ========================================
+# Проверка состояния вебхука 6479059814:AAFAi3Ksbq1cqb3hemkRdyL2RYkCWtCVzi0
+# @VerifyAuthBot:
+# https://api.telegram.org/bot6479059814:AAFAi3Ksbq1cqb3hemkRdyL2RYkCWtCVzi0/getWebhookInfo
+# ========================================
+
+ # @aiogramHook_bot:      6267139196:AAHuGWw4g5tjskf9KKS6vNcs62mMYnpKUT4
+# https://api.telegram.org/bot6267139196:AAHuGWw4g5tjskf9KKS6vNcs62mMYnpKUT4/getWebhookInfo
+
+
+# ========================================
+#  sudo docker pull redis:latest
+# docker pull redis:latest
+# ========================================
+
+# main_router = Router()
+#
+# BASE_URL = getenv("BASE_URL", "https://example.com")
+# MAIN_BOT_TOKEN = getenv("BOT_TOKEN")
+#
+# WEB_SERVER_HOST = "127.0.0.1"
+# WEB_SERVER_PORT = 8080
+# MAIN_BOT_PATH = "/webhook/main"
+# OTHER_BOTS_PATH = "/webhook/bot/{bot_token}"
+# REDIS_DSN = "redis://127.0.0.1:6479"
+#
+# OTHER_BOTS_URL = f"{BASE_URL}{OTHER_BOTS_PATH}"
+# ========================================
+# https://hub.docker.com/_/redis
+# ========================================
+# ========================================
+# Запуск docker-a redis
+
+# docker run --name my-redis -d redis
+
+
+
+# ========================================

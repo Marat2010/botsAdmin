@@ -33,8 +33,8 @@ WEB_SERVER_HOST = "127.0.0.1"
 WEB_SERVER_PORT = 8080
 MAIN_BOT_PATH = "/webhook/main"
 OTHER_BOTS_PATH = "/webhook/bot/{bot_token}"
-REDIS_DSN = "redis://127.0.0.1:6379"
-# REDIS_DSN = "redis://127.0.0.1:6479"
+# REDIS_DSN = "redis://127.0.0.1:6379"
+REDIS_DSN = "redis://127.0.0.1:6479"
 
 OTHER_BOTS_URL = f"{BASE_URL}{OTHER_BOTS_PATH}"
 
@@ -114,9 +114,9 @@ if __name__ == "__main__":
 
 
 # ========================================
-# Проверка состояния вебхука 6479059814:AAFAi3Ksbq1cqb3hemkRdyL2RYkCWtCVzi0
+# Проверка состояния вебхука 6479059814:AAFAi3.............WtCVzi0
 # @VerifyAuthBot:
-# https://api.telegram.org/bot6479059814:AAFAi3Ksbq1cqb3hemkRdyL2RYkCWtCVzi0/getWebhookInfo
+# https://api.telegram.org/bot6479059814:AAFAi..........WtCVzi0/getWebhookInfo
 # ========================================
 
  # @aiogramHook_bot:      6267139196:AA.........s62mMYnpKUT4

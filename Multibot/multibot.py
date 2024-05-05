@@ -50,6 +50,7 @@ def is_bot_token(value: str) -> Union[bool, Dict[str, Any]]:
 @main_router.message(Command("add", magic=F.args.func(is_bot_token)))
 async def command_add_bot(message: Message, command: CommandObject, bot: Bot) -> Any:
     new_bot = Bot(token=command.args, session=bot.session)
+    print("=== Добавление бота ===: ", F.args)
     try:
         bot_user = await new_bot.get_me()
     except TelegramUnauthorizedError:
@@ -59,7 +60,21 @@ async def command_add_bot(message: Message, command: CommandObject, bot: Bot) ->
     return await message.answer(f"Bot @{bot_user.username} successful added")
 
 
+@main_router.message(F.text == "test")
+async def test(message: Message) -> None:
+    """
+    Проверка доступности основного бота
+    """
+    try:
+        # Send a copy of the received message
+        await message.send_copy(chat_id=message.chat.id)
+    except TypeError:
+        # But not all the types is supported to be copied so need to handle it
+        await message.answer("Nice try!")
+
+
 async def on_startup(dispatcher: Dispatcher, bot: Bot):
+    print("Starting up...")
     await bot.set_webhook(f"{BASE_URL}{MAIN_BOT_PATH}")
 
 
@@ -76,6 +91,7 @@ def main():
     main_dispatcher = Dispatcher(storage=storage)
     main_dispatcher.include_router(main_router)
     main_dispatcher.startup.register(on_startup)
+    # main_dispatcher.message(Command("start", magic=is_bot_token))
 
     multibot_dispatcher = Dispatcher(storage=storage)
     multibot_dispatcher.include_router(form_router)
@@ -103,8 +119,8 @@ if __name__ == "__main__":
 # https://api.telegram.org/bot6479059814:AAFAi3Ksbq1cqb3hemkRdyL2RYkCWtCVzi0/getWebhookInfo
 # ========================================
 
- # @aiogramHook_bot:      6267139196:AAHuGWw4g5tjskf9KKS6vNcs62mMYnpKUT4
-# https://api.telegram.org/bot6267139196:AAHuGWw4g5tjskf9KKS6vNcs62mMYnpKUT4/getWebhookInfo
+ # @aiogramHook_bot:      6267139196:AA.........s62mMYnpKUT4
+# https://api.telegram.org/bot6267139196:..........cs62mMYnpKUT4/getWebhookInfo
 
 
 # ========================================

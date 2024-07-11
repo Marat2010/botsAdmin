@@ -19,7 +19,7 @@ load_dotenv("../.env")
 # Переменные окружения "взяты" из ".env"
 # (В будущем лучше организовать через settings Pydantic)
 SECRET_KEY_PAYMENT = os.getenv("SECRET_KEY_PAYMENT")  # Секретный ключ для оплаты
-URL_NOTIFICATION = os.getenv("URL_SUCCESS")  # URL для уведомления об оплате
+# URL_NOTIFICATION = os.getenv("URL_SUCCESS")  # URL для уведомления об оплате
 # URL_RETURN = os.getenv("URL_RETURN")  # Пока не используем!!!
 # URL_SUCCESS = os.getenv("URL_SUCCESS")  # Пока не используем!!!
 
@@ -50,7 +50,6 @@ async def payment_notification(request: web.Request):
     # Сравниваем две подписи
     if receivedSign == sign_my:
         print("Совпадение - Signature is awesome")
-        print(web.Response(text="Payment, Ok"))
 
         # ===================================
         # Здесь можно формировать свой код, ... например
@@ -58,11 +57,11 @@ async def payment_notification(request: web.Request):
         # Занести данные об оплате в БД
         # ==================================
 
-        return web.Response(status=200)  # Ответ 200 для продамуса.
+        return web.Response(status=200, text="Ok")  # Ответ 200 для продамуса.
 
     else:
         print("Плохо - Signature is incorrect")
-        return web.Response(status=400)  # Ответ 400 для продамуса.
+        return web.Response(status=400, text="Подписи не совпадают")  # Ответ 400 для продамуса.
 
 
 @routes.get('/successful')  # Маршрут для возврата пользователя при успешной оплате

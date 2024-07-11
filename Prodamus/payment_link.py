@@ -3,18 +3,23 @@
   Бывший файл working.py, сделанный Святославом.
 """
 import os
-from collections.abc import MutableMapping
 from urllib.parse import urlencode
 
 from dotenv import load_dotenv
+
+from utils_prodamus import sign, http_build_query
 
 # Загрузка переменных среды из .env файла
 load_dotenv("../.env")
 
 SECRET_KEY_PAYMENT = os.getenv("SECRET_KEY_PAYMENT")  # Секретный ключ для оплаты
-URL_RETURN = os.getenv("URL_RETURN")  # Пока не используем!!!
-URL_SUCCESS = os.getenv("URL_SUCCESS")  # Пока не используем!!!
-URL_NOTIFICATION = os.getenv("URL_SUCCESS")  # URL для уведомления об оплате
+
+# URL_RETURN = os.getenv("URL_RETURN")  # URL для возврата пользователя без оплаты
+URL_RETURN = os.getenv("URL_BASE_DOMAIN") + "/" + "return"  # URL для возврата пользователя без оплаты
+# URL_SUCCESS = os.getenv("URL_SUCCESS")  # URL для возврата пользователя при успешной оплате
+URL_SUCCESS = os.getenv("URL_BASE_DOMAIN") + "/" + "successful"  # URL для возврата пользователя при успешной оплате
+# URL_NOTIFICATION = os.getenv("URL_SUCCESS")  # URL для уведомления об оплате
+URL_NOTIFICATION = os.getenv("URL_BASE_DOMAIN") + '/' + "notification"  # URL для уведомления об оплате
 
 
 def generate_payment_link():
@@ -24,7 +29,7 @@ def generate_payment_link():
     # Секретный ключ. Можно найти на странице настроек,
     # в личном кабинете платежной формы
     # secret_key = 'b635..........13b2'
-    # Перенесо в начало файла "SECRET_KEY_PAYMENT", загрузка из окружения .env
+    # Перенесено в начало файла "SECRET_KEY_PAYMENT", загрузка из окружения .env
 
     data = {
         # хххх - номер заказ в системе интернет-магазина
@@ -34,8 +39,9 @@ def generate_payment_link():
         'customer_phone': '+79199485553',
 
         # ИМЯ@prodamus.ru - e-mail адрес клиента
-        #'customer_email': 'ИМЯ@prodamus.ru',
-        'customer_email': 'volynec-s@bk.ru',
+        # 'customer_email': 'ИМЯ@prodamus.ru',
+        # 'customer_email': 'volynec-s@bk.ru',
+        'customer_email': 'smg_2006@list.ru',
 
 
         # перечень товаров заказа
@@ -131,13 +137,12 @@ def generate_payment_link():
         #  url-адрес для возврата пользователя без оплаты
         #    (при необходимости прописать свой адрес)
         # 'urlReturn': 'https://demo.payform.ru/demo-return',
-        'urlReturn': 'https://a1f8-178-204-220-54.ngrok-free.app/payment',
+        'urlReturn': URL_RETURN,
 
         # url-адрес для возврата пользователя при успешной оплате
         #    (при необходимости прописать свой адрес)
         # 'urlSuccess': 'https://demo.payform.ru/demo-success',
-        # 'urlSuccess': URL_SUCCESS,
-        'urlSuccess': 'https://a1f8-178-204-220-54.ngrok-free.app/payment',
+        'urlSuccess': URL_SUCCESS,
 
         #  служебный url-адрес для уведомления интернет-магазина
         #            о поступлении оплаты по заказу
@@ -145,12 +150,18 @@ def generate_payment_link():
         #            формат данных настроен под систему интернет-магазина
         #            (при необходимости прописать свой адрес)
         # 'urlNotification': 'https://demo.payform.ru/demo-notification',
-        'urlNotification': 'https://a1f8-178-204-220-54.ngrok-free.app/payment',
+        'urlNotification': URL_NOTIFICATION,
 
         #  код системы интернет-магазина, запросить у поддержки,
         #      для самописных систем можно оставлять пустым полем
         #      (при необходимости прописать свой код)
-        'sys': 'bysviat',
+        # 'sys': 'bysviat',
+        'sys': 'Test_bysviat',
+
+        # Если передано значение 1, то платеж пройдет в демо - режиме
+        'demo_mode': 1,
+        'callbackType': 'json',
+        # 'type': 'json',
 
         #  метод оплаты, выбранный клиентом
         #  	     если есть возможность выбора на стороне интернет-магазина,
@@ -201,57 +212,22 @@ def generate_payment_link():
 
         #  текст который будет показан пользователю после совершения оплаты
         #    (не обязательно)
-        'paid_content': 'Текс сообщения'
+        'paid_content': 'Это Тест - Текс сообщения'
     }
 
-    # подписываем с помощью кастомной функции sign (см ниже)
+    # подписываем с помощью кастомной функции sign
+    # (см utils_prodamus, вынес все утилиты продамуса, отдельно)
     data['signature'] = sign(data, SECRET_KEY_PAYMENT)
-    # компануем ссылку с помощью кастомной функции http_build_query (см ниже)
+
+    # компонуем ссылку с помощью кастомной функции http_build_query
+    # (см utils_prodamus, вынес все утилиты продамуса, отдельно)
     link = linktoform + '?' + urlencode(http_build_query(data))
 
     return link
 
 
-def sign(data, secret_key):
-    import hashlib
-    import hmac
-    import json
-
-    # переводим все значения data в string c помощью кастомной функции deep_int_to_string (см ниже)
-    deep_int_to_string(data)
-
-    # переводим data в JSON, с сортировкой ключей в алфавитном порядке, без пробелов и экранируем бэкслеши
-    data_json = json.dumps(data, sort_keys=True, ensure_ascii=False, separators=(',', ':')).replace("/", "\\/")
-
-    # создаем подпись с помощью библиотеки hmac и возвращаем ее
-    return hmac.new(secret_key.encode('utf8'), data_json.encode('utf8'), hashlib.sha256).hexdigest()
-
-
-def deep_int_to_string(dictionary):
-    for key, value in dictionary.items():
-        if isinstance(value, MutableMapping):
-            deep_int_to_string(value)
-        elif isinstance(value, list) or isinstance(value, tuple):
-            for k, v in enumerate(value):
-                deep_int_to_string({str(k): v})
-        else:
-            dictionary[key] = str(value)
-
-
-def http_build_query(dictionary, parent_key=False):
-    items = []
-    for key, value in dictionary.items():
-        new_key = str(parent_key) + '[' + key + ']' if parent_key else key
-        if isinstance(value, MutableMapping):
-            items.extend(http_build_query(value, new_key).items())
-        elif isinstance(value, list) or isinstance(value, tuple):
-            for k, v in enumerate(value):
-                items.extend(http_build_query({str(k): v}, new_key).items())
-        else:
-            items.append((new_key, value))
-    return dict(items)
-
-
 generated_payment_link = generate_payment_link()
 print(generated_payment_link)
+
+
 

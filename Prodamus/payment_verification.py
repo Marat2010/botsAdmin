@@ -11,7 +11,10 @@ from json import JSONDecodeError
 
 from aiohttp import web
 from dotenv import load_dotenv
+
 from utils_prodamus import sign
+# from Prodamus.DB_Sqlite.adding_payments import add_payments
+from DB_Sqlite.adding_payments import add_payments
 
 # Загрузка переменных среды из .env файла
 load_dotenv("../.env")
@@ -57,9 +60,13 @@ async def payment_notification(request: web.Request):
         # Занести данные об оплате в БД
         # ==================================
 
+        # Добавление записи в базу данных Sqlite
+        # add_payments(data_json)  - !!!пока не сделано до конца!!!
+
         return web.Response(status=200, text="Ok")  # Ответ 200 для продамуса.
 
     else:
+        # add_payments(data_json)
         print("Плохо - Signature is incorrect")
         return web.Response(status=400, text="Подписи не совпадают")  # Ответ 400 для продамуса.
 

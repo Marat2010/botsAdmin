@@ -13,8 +13,7 @@ from aiohttp import web
 from dotenv import load_dotenv
 
 from utils_prodamus import sign
-# from Prodamus.DB_Sqlite.adding_payments import add_payments
-from DB_Sqlite.adding_payments import add_payments
+from Prodamus.DB_Sqlite.adding_payments import add_payments
 
 # Загрузка переменных среды из .env файла
 load_dotenv("../.env")
@@ -35,8 +34,6 @@ async def payment_notification(request: web.Request):
     receivedSign = request.headers.get('Sign')  # Здесь Ключ 'Sign', подписанный продамусом
     print("== Полученная подпись (receivedSign) ==", receivedSign)
 
-    # data_json = await request.json()
-
     try:
         # Получаем данные в формате json. Задается в payment_link параметр "'callbackType': 'json',"
         # Сделать обработку исключений, для случаев когда нет данных, в формате JSON
@@ -56,12 +53,11 @@ async def payment_notification(request: web.Request):
 
         # ===================================
         # Здесь можно формировать свой код, ... например
-        # отправку сообщения боту, ....
-        # Занести данные об оплате в БД
+        # отправку сообщения боту, занести данные об оплате в БД, ....
         # ==================================
 
         # Добавление записи в базу данных Sqlite
-        # add_payments(data_json)  - !!!пока не сделано до конца!!!
+        add_payments(data_json)
 
         return web.Response(status=200, text="Ok")  # Ответ 200 для продамуса.
 

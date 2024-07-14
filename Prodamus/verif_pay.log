@@ -1,32 +1,8 @@
-[2024-07-14 17:50:16,692] [INFO] === Полученная подпись (receivedSign): ca94f607050736724afa4d30df693c27934f17c1ccdf1d0278b775c1d4bf7f44 ===
-[2024-07-14 17:50:16,696] [INFO] === Наша подпись (sign_my): ca94f607050736724afa4d30df693c27934f17c1ccdf1d0278b775c1d4bf7f44 === 
-[2024-07-14 17:50:16,697] [INFO] === Совпадение - Signature is awesome === 
-[2024-07-14 17:50:16,698] [WARNING]  =! Нет Файла БД Sqlite !=: no such table: payments
-[2024-07-14 17:50:16,698] [WARNING] =! Данные НЕ внесены.!!! Создаем БД !=
-
-[2024-07-14 17:50:16,715] [INFO] === Создан Файл БД Sqlite: /home/marat/PycharmProjects/botsAdmin/Prodamus/payments.sqlite3 ===
-[2024-07-14 17:50:16,715] [INFO] === Повторяем последнюю операцию!!! ===
-
-[2024-07-14 17:50:16,716] [INFO] Данные внесены.
-Файл БД Sqlite здесь: /home/marat/PycharmProjects/botsAdmin/Prodamus/payments.sqlite3
-
-[2024-07-14 17:50:16,737] [INFO] 127.0.0.1 [14/Jul/2024:17:50:16 +0300] "POST /prodamus/notification HTTP/1.1" 200 153 "-" "curl"
-[2024-07-14 17:52:09,051] [INFO] === Полученная подпись (receivedSign): dfbdb23865ce445ee048cd6d02d39f870cab58434eb40028f773d603aa113643 ===
-[2024-07-14 17:52:09,054] [INFO] === Наша подпись (sign_my): dfbdb23865ce445ee048cd6d02d39f870cab58434eb40028f773d603aa113643 === 
-[2024-07-14 17:52:09,055] [INFO] === Совпадение - Signature is awesome === 
-[2024-07-14 17:52:09,056] [INFO] Данные внесены.
-Файл БД Sqlite здесь: /home/marat/PycharmProjects/botsAdmin/Prodamus/payments.sqlite3
-
-[2024-07-14 17:52:09,069] [INFO] 127.0.0.1 [14/Jul/2024:17:52:09 +0300] "POST /prodamus/notification HTTP/1.1" 200 153 "-" "curl"
-[2024-07-14 17:52:31,592] [INFO] 127.0.0.1 [14/Jul/2024:17:52:31 +0300] "POST /notification HTTP/1.1" 404 173 "-" "PostmanRuntime/7.22.0"
-[2024-07-14 17:54:58,402] [INFO] === Полученная подпись (receivedSign): qqqaaaZZZ ===
-[2024-07-14 17:54:58,403] [INFO] === Наша подпись (sign_my): e6f13e40da80c5f338c63e511deb9f275ad04dd36888cc16e622dcf4e69465aa === 
-[2024-07-14 17:54:58,409] [ERROR] =!!! Плохо - Signature is incorrect !!!=
-[2024-07-14 17:54:58,411] [INFO] 127.0.0.1 [14/Jul/2024:17:54:58 +0300] "POST /prodamus/notification HTTP/1.1" 400 199 "-" "PostmanRuntime/7.22.0"
-[2024-07-14 17:55:41,301] [INFO] === Полученная подпись (receivedSign): e6f13e40da80c5f338c63e511deb9f275ad04dd36888cc16e622dcf4e69465aa ===
-[2024-07-14 17:55:41,303] [INFO] === Наша подпись (sign_my): e6f13e40da80c5f338c63e511deb9f275ad04dd36888cc16e622dcf4e69465aa === 
-[2024-07-14 17:55:41,303] [INFO] === Совпадение - Signature is awesome === 
-[2024-07-14 17:55:41,304] [ERROR] Error handling request
+[2024-07-14 23:20:19,119] [INFO] === Полученная подпись (receivedSign): 5007ae196ca140503421185a3d66b89072c7f7681b7ef34b7bbb54b53bdfab30 ===
+[2024-07-14 23:20:19,135] [INFO] === Наша подпись (sign_my): 5007ae196ca140503421185a3d66b89072c7f7681b7ef34b7bbb54b53bdfab30 === 
+[2024-07-14 23:20:19,136] [INFO] === Совпадение - Signature is awesome === 
+[2024-07-14 23:20:19,138] [ERROR] =!!! Нет необходимого ключа !!!=: 'payment_init'
+[2024-07-14 23:20:19,138] [ERROR] Error handling request
 Traceback (most recent call last):
   File "/home/marat/PycharmProjects/botsAdmin/venv/lib/python3.10/site-packages/aiohttp/web_protocol.py", line 452, in _handle_request
     resp = await request_handler(request)
@@ -36,19 +12,17 @@ Traceback (most recent call last):
     add_payments(data_json)
   File "/home/marat/PycharmProjects/botsAdmin/Prodamus/DB_Sqlite/adding_payments.py", line 24, in add_payments
     data = data_to_dataDB(data_dict)  # Переводим словарь данных в кортеж, для последующего занесения в БД
-  File "/home/marat/PycharmProjects/botsAdmin/Prodamus/DB_Sqlite/adding_payments.py", line 58, in data_to_dataDB
-    dataDB = (data['date'],
-KeyError: 'date'
-[2024-07-14 17:55:41,312] [INFO] 127.0.0.1 [14/Jul/2024:17:55:41 +0300] "POST /prodamus/notification HTTP/1.1" 500 245 "-" "PostmanRuntime/7.22.0"
-[2024-07-14 17:57:17,371] [INFO] 127.0.0.1 [14/Jul/2024:17:57:17 +0300] "POST /notification HTTP/1.1" 404 173 "-" "curl"
-[2024-07-14 17:57:40,826] [INFO] === Полученная подпись (receivedSign): e6f13e40da80c5f338c63e511deb9f275ad04dd36888cc16e622dcf4e69465aa ===
-[2024-07-14 17:57:40,829] [INFO] === Наша подпись (sign_my): 8a025b8680463742152afa97fc1747e1ff764bda2b3de37fbb2cff1530e0d694 === 
-[2024-07-14 17:57:40,829] [ERROR] =!!! Плохо - Signature is incorrect !!!=
-[2024-07-14 17:57:40,831] [INFO] 127.0.0.1 [14/Jul/2024:17:57:40 +0300] "POST /prodamus/notification HTTP/1.1" 400 199 "-" "PostmanRuntime/7.22.0"
-[2024-07-14 17:58:13,769] [INFO] === Полученная подпись (receivedSign): 8a025b8680463742152afa97fc1747e1ff764bda2b3de37fbb2cff1530e0d694 ===
-[2024-07-14 17:58:13,770] [INFO] === Наша подпись (sign_my): 8a025b8680463742152afa97fc1747e1ff764bda2b3de37fbb2cff1530e0d694 === 
-[2024-07-14 17:58:13,771] [INFO] === Совпадение - Signature is awesome === 
-[2024-07-14 17:58:13,771] [INFO] Данные внесены.
-Файл БД Sqlite здесь: /home/marat/PycharmProjects/botsAdmin/Prodamus/payments.sqlite3
+  File "/home/marat/PycharmProjects/botsAdmin/Prodamus/DB_Sqlite/adding_payments.py", line 74, in data_to_dataDB
+    return dataDB
+UnboundLocalError: local variable 'dataDB' referenced before assignment
+[2024-07-14 23:20:19,141] [INFO] 127.0.0.1 [14/Jul/2024:23:20:19 +0300] "POST /prodamus/notification HTTP/1.1" 500 245 "-" "PostmanRuntime/7.22.0"
+[2024-07-14 23:22:04,560] [INFO] === Полученная подпись (receivedSign): 5007ae196ca140503421185a3d66b89072c7f7681b7ef34b7bbb54b53bdfab30 ===
+[2024-07-14 23:22:04,562] [INFO] === Наша подпись (sign_my): 18c2bba1d92842ddef84a44fb08c2fc412626a7ee6c7bcbbb4666c081ff38616 === 
+[2024-07-14 23:22:04,562] [ERROR] =!!! Плохо - Signature is incorrect !!!=
+[2024-07-14 23:22:04,563] [INFO] 127.0.0.1 [14/Jul/2024:23:22:04 +0300] "POST /prodamus/notification HTTP/1.1" 400 199 "-" "PostmanRuntime/7.22.0"
+[2024-07-14 23:22:35,659] [INFO] === Полученная подпись (receivedSign): 18c2bba1d92842ddef84a44fb08c2fc412626a7ee6c7bcbbb4666c081ff38616 ===
+[2024-07-14 23:22:35,659] [INFO] === Наша подпись (sign_my): 18c2bba1d92842ddef84a44fb08c2fc412626a7ee6c7bcbbb4666c081ff38616 === 
+[2024-07-14 23:22:35,661] [INFO] === Совпадение - Signature is awesome === 
+[2024-07-14 23:22:35,665] [INFO] Данные внесены.Файл БД Sqlite: /home/marat/PycharmProjects/botsAdmin/Prodamus/payments.sqlite3
 
-[2024-07-14 17:58:13,785] [INFO] 127.0.0.1 [14/Jul/2024:17:58:13 +0300] "POST /prodamus/notification HTTP/1.1" 200 153 "-" "PostmanRuntime/7.22.0"
+[2024-07-14 23:22:35,678] [INFO] 127.0.0.1 [14/Jul/2024:23:22:35 +0300] "POST /prodamus/notification HTTP/1.1" 200 153 "-" "PostmanRuntime/7.22.0"

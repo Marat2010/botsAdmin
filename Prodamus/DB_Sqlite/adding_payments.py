@@ -26,8 +26,8 @@ def add_payments(data_dict):
     try:
         cursor.execute("INSERT INTO payments (date,order_id,order_num,sum,customer_phone,customer_email,"
                    "products_name,payment_init) VALUES (?,?,?,?,?,?,?,?)", data)
-        print(f"Данные внесены.\nФайл БД Sqlite здесь: {os.path.abspath(DB_SQLITE_NAME)}\n")
-        logging.info(f"Данные внесены.\nФайл БД Sqlite здесь: {os.path.abspath(DB_SQLITE_NAME)}\n")
+        print(f"=== Данные внесены.Файл БД Sqlite: {os.path.abspath(DB_SQLITE_NAME)} ===")
+        logging.info(f"=== Данные внесены. Файл БД Sqlite: {os.path.abspath(DB_SQLITE_NAME)} ===")
 
     except OperationalError as e:
         print(" =! Нет Файла БД Sqlite !=: ", e)
@@ -55,15 +55,20 @@ def add_payments(data_dict):
 # Переводим словарь данных в кортеж, для последующего занесения в БД
 def data_to_dataDB(data):
     if isinstance(data, dict):
-        dataDB = (data['date'],
-                  data['order_id'],
-                  data['order_num'],
-                  data['sum'],
-                  data['customer_phone'],
-                  data['customer_email'],
-                  data['products'][0]['name'],
-                  data['payment_init'],
-                  )
+        try:
+            dataDB = (data['date'],
+                      data['order_id'],
+                      data['order_num'],
+                      data['sum'],
+                      data['customer_phone'],
+                      data['customer_email'],
+                      data['products'][0]['name'],
+                      data['payment_init'],
+                      )
+        except KeyError as e:
+            print(f" =!!! Нет необходимого ключа !!!=: {e}")
+            logging.error(f"=!!! Нет необходимого ключа !!!=: {e}")
+
     else:
         dataDB = data
     return dataDB

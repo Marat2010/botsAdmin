@@ -1,4 +1,5 @@
 import os
+import logging
 import sqlite3
 from sqlite3 import OperationalError, ProgrammingError
 
@@ -6,10 +7,14 @@ from dotenv import load_dotenv
 
 # Загрузка переменных среды из .env файла
 load_dotenv("../.env")
+# Логирование в файл
+logging.basicConfig(level=logging.INFO, filename="verif_pay.log", filemode="w",
+                    format="[%(asctime)s] [%(levelname)s] %(message)s")
 
 DB_SQLITE_NAME = os.getenv("DB_SQLITE_NAME")  # Имя файла БД Sqlite
 
-con = sqlite3.connect(f"./DB_Sqlite/{DB_SQLITE_NAME}")
+# con = sqlite3.connect(f"./DB_Sqlite/{DB_SQLITE_NAME}")
+con = sqlite3.connect(f"./{DB_SQLITE_NAME}")
 cursor = con.cursor()
 
 
@@ -22,20 +27,27 @@ def add_payments(data_dict):
         cursor.execute("INSERT INTO payments (date,order_id,order_num,sum,customer_phone,customer_email,"
                    "products_name,payment_init) VALUES (?,?,?,?,?,?,?,?)", data)
         print(f"Данные внесены.\nФайл БД Sqlite здесь: {os.path.abspath(DB_SQLITE_NAME)}\n")
+        logging.info(f"Данные внесены.\nФайл БД Sqlite здесь: {os.path.abspath(DB_SQLITE_NAME)}\n")
 
     except OperationalError as e:
-        print(" == Нет Файла БД Sqlite ==: ", e)
-        print(f"!!! Данные НЕ внесены.!!!\n Создаем БД\n")
+        print(" =! Нет Файла БД Sqlite !=: ", e)
+        logging.warning(f" =! Нет Файла БД Sqlite !=: {e}")
+        print(f"=!!! Данные НЕ внесены.!!! Создаем БД\n")
+        logging.warning(f"=! Данные НЕ внесены.!!! Создаем БД !=\n")
         create_DB()
         print("Создан Файл БД Sqlite: ", os.path.abspath(DB_SQLITE_NAME))
-        print(f"Повторяем последнюю операцию!!!\n")
+        logging.info(f"=== Создан Файл БД Sqlite: {os.path.abspath(DB_SQLITE_NAME)} ===")
+        print("=== Повторяем последнюю операцию!!! ===\n")
+        logging.info("=== Повторяем последнюю операцию!!! ===\n")
         add_payments(data)
 
     except ProgrammingError as e:
-        print(" == Неверное количество предоставленных данных ==: ", e)
+        print(" =!!! Неверное количество предоставленных данных !!!=: ", e)
+        logging.error(f"=!!! Неверное количество предоставленных данных !!!=: {e}")
 
     except Exception as e:
-        print(" == Ошибка ==: ", e)
+        print(" =!!! Ошибка !!!=: ", e)
+        logging.error(f" =!!! Ошибка !!!=: {e}")
 
     con.commit()
 
@@ -74,6 +86,8 @@ def create_DB():
 
 
 if __name__ == '__main__':
+    pass
+
     # =========== Для тестов==================
     # data1 = {'date': '2024-07-10T04:11:02+03:00',
     #         'order_id': '22583868',
@@ -86,15 +100,16 @@ if __name__ == '__main__':
     #          }
     # ===============================
 
-    data2 = ('2024-07-10T04:11:02+03:00',
-             '22583868',
-             '7',
-             '50.00',
-             '+79199485553',
-              'smg_2006@list.ru',
-             "test good",
-            1222222
-             )
+    # data2 = ('2024-07-10T04:11:02+03:00',
+    #          '22583868',
+    #          '7',
+    #          '50.00',
+    #          '+79199485553',
+    #           'smg_2006@list.ru',
+    #          "test good",
+    #         1222222
+    #          )
+    # ===============================
 
     # create_DB()
     # add_payments(data2)

@@ -3,6 +3,7 @@
   Бывший файл working.py, сделанный Святославом.
 """
 import os
+import logging
 from urllib.parse import urlencode
 
 from dotenv import load_dotenv
@@ -11,6 +12,10 @@ from utils_prodamus import sign, http_build_query
 
 # Загрузка переменных среды из .env файла
 load_dotenv("../.env")
+# Логирование в файл
+logging.basicConfig(level=logging.INFO, filename="verif_pay.log", filemode="w",
+                    format="[%(asctime)s] [%(levelname)s] %(message)s")
+
 
 SECRET_KEY_PAYMENT = os.getenv("SECRET_KEY_PAYMENT")  # Секретный ключ для оплаты
 
@@ -227,7 +232,8 @@ def generate_payment_link():
 
 
 generated_payment_link = generate_payment_link()
-print(generated_payment_link)
+print(f"=== Ссылка для оплаты: ===\n{generated_payment_link}")
+logging.info(f"=== Ссылка для оплаты: ===\n{generated_payment_link}")
 
 
 

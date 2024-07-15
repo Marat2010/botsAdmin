@@ -1,4 +1,4 @@
-#wget https://raw.githubusercontent.com/Marat2010/botsAdmin/master/Prodamus/deployVPS.sh
+#wget https://raw.githubusercontent.com/Marat2010/botsAdmin/master/Prodamus/deployVPS.sh && chmod +x deployVPS.sh && ./deployVPS.sh
 
 
 echo
@@ -29,13 +29,27 @@ sudo mv $domain_ip.key /etc/ssl/nginx/
 sudo mv $domain_ip.crt /etc/ssl/nginx/
 
 echo
-echo "=== Запуск сервиса, службы (SYSTEMD) бота ===" 
+echo "=== Запуск сервиса, службы (SYSTEMD) Prodamus-а ==="
 echo
 sudo cp Prodamus/payment_verification.service /lib/systemd/system/payment_verification.service
 sudo systemctl daemon-reload
 sudo systemctl enable payment_verification.service
 sudo systemctl start payment_verification.service
 
+
+echo "=== Добавьте настройки в конфигурацию Nginx: ==="
+echo "listen 443 ssl; "
+echo "ssl_certificate       /etc/ssl/nginx/$domain_ip.crt; "
+echo "ssl_certificate_key   /etc/ssl/nginx/$domain_ip.key; "
+echo
+echo "location /Prodamus { "
+echo "    proxy_pass http://127.0.0.1:9090 "
+echo "}"
+echo
+echo "=== Перезапустите Nginx: ==="
+echo "sudo systemctl daemon-reload"
+echo "sudo systemctl restart nginx.service"
+echo
 
 
 

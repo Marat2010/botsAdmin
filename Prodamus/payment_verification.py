@@ -9,6 +9,7 @@
 # import ssl
 import os
 import logging
+from datetime import datetime
 from json import JSONDecodeError
 
 from aiohttp import web
@@ -16,13 +17,9 @@ from dotenv import load_dotenv
 
 from utils_prodamus import sign
 from DB_Sqlite.adding_payments import add_payments
-# from Prodamus.DB_Sqlite.adding_payments import add_payments
 
 # Загрузка переменных среды из .env файла
 load_dotenv("../.env")
-# Логирование в файл
-logging.basicConfig(level=logging.INFO, filename="verif_pay.log", filemode="w",
-                    format="[%(asctime)s] [%(levelname)s] %(message)s")
 
 # Переменные окружения "взяты" из ".env"
 # (В будущем лучше организовать через settings Pydantic)
@@ -30,6 +27,17 @@ SECRET_KEY_PAYMENT = os.getenv("SECRET_KEY_PAYMENT")  # Секретный кл�
 # URL_NOTIFICATION = os.getenv("URL_SUCCESS")  # URL для уведомления об оплате
 # URL_RETURN = os.getenv("URL_RETURN")  # Пока не используем!!!
 # URL_SUCCESS = os.getenv("URL_SUCCESS")  # Пока не используем!!!
+
+# Логирование в файл "verif_pay.log", просмотр через: "tail -f verif_pay.log"
+# По правильному надо сделать запись в системные логи (см код ниже)
+LOG_FILE = os.getenv("LOG_PRODAMUS")
+
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.INFO)
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s [%(levelname)s] [%(module)s] [%(funcName)s]: %(message)s',
+                    handlers=[logging.FileHandler(LOG_FILE, mode='w'), stream_handler])
 
 routes = web.RouteTableDef()  # для маршрутов, страниц, путей
 
@@ -39,26 +47,22 @@ routes = web.RouteTableDef()  # для маршрутов, страниц, пу�
 @routes.post('/prodamus/notification')  # Маршрут для Post запроса для уведомления об оплате
 async def payment_notification(request: web.Request):
     receivedSign = request.headers.get('Sign')  # Здесь Ключ 'Sign', подписанный продамусом
-    print("=== Полученная подпись (receivedSign) ===", receivedSign)
     logging.info(f"=== Полученная подпись (receivedSign): {receivedSign} ===")
 
     try:
         # Получаем данные в формате json. Задается в "payment_link" параметр "'callbackType': 'json',"
         data_json = await request.json()
     except JSONDecodeError as e:
-        print(f"Плохо - Нет данных в формате JSON.\n", e)
         logging.error(f"=!!! Плохо - Нет данных в формате JSON: {e} !!!=")
         return web.Response(status=400, text="=!!! Нет данных в формате JSON !!!=")  # Ответ 400 для продамуса.
 
     # подписываем эти данные с помощью кастомной функции sign
     # (см utils_prodamus, вынес все утилиты продамуса, отдельно)
     sign_my = sign(data_json, SECRET_KEY_PAYMENT)
-    print("=== Наша подпись (sign_my) === ", sign_my)
     logging.info(f"=== Наша подпись (sign_my): {sign_my} === ")
 
     # Сравниваем две подписи
     if receivedSign == sign_my:
-        print("Совпадение - Signature is awesome")
         logging.info("=== Совпадение - Signature is awesome === ")
 
         # ===================================
@@ -73,28 +77,24 @@ async def payment_notification(request: web.Request):
 
     else:
         # add_payments(data_json)
-        print("=!!! Плохо - Signature is incorrect !!!=")
         logging.error("=!!! Плохо - Signature is incorrect !!!=")
         return web.Response(status=400, text="Подписи не совпадают")  # Ответ 400 для продамуса.
 
 
 @routes.get('/prodamus/successful')  # Маршрут для возврата пользователя при успешной оплате
 async def successful_payment(request):
-    print("=== Оплата прошла удачно! ===")
     logging.info("=== Оплата прошла удачно! ===")
     return web.Response(text="Оплата прошла удачно!")
 
 
 @routes.get('/prodamus/return')  # Маршрут для возврата пользователя без оплаты
 async def without_payment(request):
-    print("=!!! Оплата НЕ прошла !!!=")
     logging.warning("=!!! Оплата НЕ прошла !!!=")
     return web.Response(text="</h2>!!! Оплата НЕ прошла !!!</h2>")
 
 
 @routes.get('/prodamus')  # Тестовая home страница
 async def hello(request):
-    print("=== Проверка доступности сервера на Aiohttp прошла! ===")
     logging.info("=== Проверка доступности сервера на Aiohttp прошла! ===")
     return web.Response(text="Проверка доступности сервера на Aiohttp прошла!")
 
@@ -123,3 +123,29 @@ if __name__ == '__main__':
 #     web.run_app(app)
 
 # =========================================================
+# # ====== Для сохранения логов в системные логи /var/log/syslog =======
+# # Информация взята: https://signoz.io/blog/python-syslog/
+#
+# from logging.handlers import SysLogHandler
+#
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
+# handler = SysLogHandler(
+#     facility=SysLogHandler.LOG_DAEMON,
+#     address='/dev/log'
+#     )
+# formatter = logging.Formatter(
+#     fmt="%(asctime)s - %(filename)s:%(funcName)s:%(lineno)d %(levelname)s - '%(message)s'",
+#     datefmt="%Y-%m-%d %H:%M:%S"
+#     )
+# handler.setFormatter(formatter)
+# logger.addHandler(handler)
+
+# logger.info('Sending a log message through SysLogHandler! VERIF_PAY:')
+# logger.info(f"=== Полученная подпись (receivedSign): {receivedSign} ===")
+
+# # =========================================================
+# logging.basicConfig(level=logging.INFO, filename=LOG_FILE, filemode="w",
+#                     format="[%(asctime)s] [%(levelname)s] %(message)s")
+# # =========================================================
+

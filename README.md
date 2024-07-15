@@ -4,7 +4,10 @@
 
 **Папки:**  
 - **"Prodamus"** - сервис оплаты.  
-
+  Для быстрого развертывания на VPS, подключитесь к нему, выполните команду и следуйте инструкциям:  
+  ```
+    wget -O ./deployVPS.sh https://raw.githubusercontent.com/Marat2010/botsAdmin/master/Prodamus/deployVPS.sh && chmod +x deployVPS.sh && ./deployVPS.sh
+    ```
   _Сделано:_
   - **формирование ссылки на оплату (файл "payment_link.py").**  
     Основные данные это:

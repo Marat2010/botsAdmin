@@ -8,7 +8,8 @@ Group=root
 Type=idle
 Restart=on-failure
 
-EnvironmentFile=/etc/environment
+#EnvironmentFile=/etc/environment
+EnvironmentFile=/root/botsAdmin/.env
 
 ExecStart=/bin/bash -c 'cd /root/botsAdmin/Prodamus/ && python3.10 payment_verification.py '
 

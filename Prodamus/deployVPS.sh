@@ -6,11 +6,14 @@ git clone https://github.com/Marat2010/botsAdmin.git
 wait
 
 cd botsAdmin/
-echo "=== Установка пакетов ==="
+echo "=== Установка пакетов apt==="
 sudo apt update
 sudo apt -y install python3-pip
-#sudo apt -y install nginx
-#sudo systemctl enable nginx
+sudo apt -y install mc lynx
+#=========================
+sudo apt -y install nginx
+sudo systemctl enable nginx
+#==========================
 echo "=== Установка пакетов из requirements ==="
 python3.10 -m pip install --upgrade pip
 python3.10 -m pip install -r requirements.txt
@@ -24,21 +27,21 @@ echo "=== Установка переменных окружения ==="
 read -p "=== Введите имя домена или IP адрес сервера VPS: " domain_ip
 echo "DOMAIN_IP='$domain_ip'" | sudo tee -a /etc/environment
 touch '.env'
-echo "DOMAIN_IP='$domain_ip'" | sudo tee -a .env
-echo "URL_BASE_DOMAIN=https://'$domain_ip'/prodamus" | sudo tee -a .env
+echo "DOMAIN_IP=$domain_ip" | sudo tee -a .env
+echo "URL_BASE_DOMAIN=https://$domain_ip/prodamus" | sudo tee -a .env
 
 read -p "=== Введите SECRET_KEY_PAYMENT Prodamus-а: " SECRET_KEY_PAYMENT
-echo "SECRET_KEY_PAYMENT='$SECRET_KEY_PAYMENT'" | sudo tee -a .env
+echo "SECRET_KEY_PAYMENT=$SECRET_KEY_PAYMENT" | sudo tee -a .env
 
 echo "#URL_RETURN=https://a1f8-178-204-220-54.ngrok-free.app/return
 #URL_SUCCESS=https://a1f8-178-204-220-54.ngrok-free.app/successful
 #URL_NOTIFICATION=https://prodamus.z2024.site/notificatio" | sudo tee -a .env
 
 echo "# ===== База данных =====
-DB_SQLITE_NAME = "payments.sqlite3"
-#DB_SQLITE_NAME = payments.db
+DB_SQLITE_NAME=payments.sqlite3
+#DB_SQLITE_NAME=payments.db
 # ===== Logs =====
-LOG_PRODAMUS="verif_pay.log"" | sudo tee -a .env
+LOG_PRODAMUS=verif_pay.log" | sudo tee -a .env
 
 echo
 echo "=== Запуск сервиса, службы (SYSTEMD) Prodamus-а ==="

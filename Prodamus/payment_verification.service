@@ -10,7 +10,7 @@ Restart=on-failure
 
 EnvironmentFile=/etc/environment
 
-ExecStart=/bin/bash -c 'cd /home/$PROJECT_USER/$PROJECT_NAME/ && source venv/bin/activate && python payment_verification.py '
+ExecStart=/bin/bash -c 'cd /root/botsAdmin/Prodamus/ && python3.10 payment_verification.py '
 
 [Install]
 WantedBy=multi-user.target

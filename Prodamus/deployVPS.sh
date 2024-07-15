@@ -7,7 +7,7 @@ wait
 
 cd botsAdmin/
 echo "=== Установка пакетов ==="
-ыгвщ apt update
+sudo apt update
 sudo apt -y install python3-pip
 echo "=== Установка пакетов из requirements ==="
 python3.10 -m pip install --upgrade pip

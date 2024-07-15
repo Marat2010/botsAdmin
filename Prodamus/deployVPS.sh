@@ -9,6 +9,8 @@ cd botsAdmin/
 echo "=== Установка пакетов ==="
 sudo apt update
 sudo apt -y install python3-pip
+#sudo apt -y install nginx
+#sudo systemctl enable nginx
 echo "=== Установка пакетов из requirements ==="
 python3.10 -m pip install --upgrade pip
 python3.10 -m pip install -r requirements.txt
@@ -20,10 +22,10 @@ mkdir /etc/ssl/nginx
 echo
 echo "=== Установка переменных окружения ==="
 read -p "=== Введите имя домена или IP адрес сервера VPS: " domain_ip
+echo "DOMAIN_IP='$domain_ip'" | sudo tee -a /etc/environment
 touch '.env'
 echo "DOMAIN_IP='$domain_ip'" | sudo tee -a .env
-echo "DOMAIN_IP='$domain_ip'" | sudo tee -a /etc/environment
-echo "URL_BASE_DOMAIN=https://'$domain_ip'/prodamus" | sudo tee -a /etc/environment
+echo "URL_BASE_DOMAIN=https://'$domain_ip'/prodamus" | sudo tee -a .env
 
 read -p "=== Введите SECRET_KEY_PAYMENT Prodamus-а: " SECRET_KEY_PAYMENT
 echo "SECRET_KEY_PAYMENT='$SECRET_KEY_PAYMENT'" | sudo tee -a .env

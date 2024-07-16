@@ -11,16 +11,20 @@ echo "=== Установка пакетов apt==="
 sudo apt update
 sudo apt -y install python3-pip
 sudo apt -y install mc lynx
+sudo apt -y install sqlite3
 #=========================
 if [ -n "`dpkg -s nginx | grep 'Status' `" ]
 then
-   echo "=== Nginx установлен ==="
+  echo
+  echo "=== Nginx установлен ==="
 else
-   echo " === Установка Nginx === "
-   sudo apt -y install nginx
-   sudo systemctl enable nginx
+  echo
+  echo " === Установка Nginx === "
+  sudo apt -y install nginx
+  sudo systemctl enable nginx
 fi
 #==========================
+echo
 echo "=== Установка пакетов из requirements.txt ==="
 python3.10 -m pip install --upgrade pip
 python3.10 -m pip install -r requirements.txt
@@ -32,7 +36,7 @@ mkdir /etc/ssl/nginx
 echo
 echo "=== Установка переменных окружения ==="
 read -p "=== Введите имя домена или IP адрес сервера VPS: " domain_ip
-echo "DOMAIN_IP='$domain_ip'" | sudo tee -a /etc/environment
+echo "DOMAIN_IP=$domain_ip" | sudo tee -a /etc/environment
 touch '.env'
 echo "DOMAIN_IP=$domain_ip" | sudo tee -a .env
 echo "URL_BASE_DOMAIN=https://$domain_ip/prodamus" | sudo tee -a .env
@@ -57,13 +61,14 @@ sudo systemctl daemon-reload
 sudo systemctl enable payment_verification.service
 sudo systemctl start payment_verification.service
 
+echo
 echo "#=== Создаем и Копируем сертификаты в папку для Nginx (/etc/ssl/nginx) ==="
 openssl req -newkey rsa:2048 -sha256 -nodes -keyout $domain_ip.key -x509 -days 365 -out $domain_ip.crt -subj "/C=RU/ST=RT/L=KAZAN/O=Home/CN=$domain_ip"
 sudo mv $domain_ip.key /etc/ssl/nginx/
 sudo mv $domain_ip.crt /etc/ssl/nginx/
 
 
-echo "=== Добавьте настройки в конфигурацию Nginx: ==="
+echo "=== Добавьте настройки в конфигурацию Nginx (/etc/nginx/conf.d/payment.conf): ==="
 echo "listen 443 ssl; "
 echo "ssl_certificate       /etc/ssl/nginx/$domain_ip.crt; "
 echo "ssl_certificate_key   /etc/ssl/nginx/$domain_ip.key; "

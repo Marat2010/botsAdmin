@@ -6,8 +6,40 @@
 - **"Prodamus"** - сервис оплаты.  
   Для быстрого развертывания на VPS, подключитесь к нему, выполните команду и следуйте инструкциям:  
   ```
-    wget -O ./deployVPS.sh https://raw.githubusercontent.com/Marat2010/botsAdmin/master/Prodamus/deployVPS.sh && chmod +x deployVPS.sh && ./deployVPS.sh
-    ```
+    wget -O ./deployVPS.sh https://raw.githubusercontent.com/Marat2010/botsAdmin/master/Prodamus/deployVPS.sh 
+  && chmod +x deployVPS.sh && ./deployVPS.sh
+    ```  
+  Скрипт выполняет клонирование проекта с гитхаба, установку пакетов apt, пакетов из requirements.txt.  
+  Далее запрашивает имя домена или IP адрес, секретный ключ продамуса, из этих данных формирует файл окружения ".env".  
+  После запускает системную службу сервера aiohttp (http://127.0.0.1:9090), для приема уведомлений о платеже
+ (payment_verification.py).  
+  Формируются SSL сертификаты для Nginx сервера в папке "/etc/ssl/nginx/".  
+  Далее необходимо вручную добавить строки в настройки Nginx (строки в конце выполнения скрипта) для 
+ переадресации на нашу службу сервер aiohttp (оповещения приема платежей).
+  И после перезапустить Nginx.  
+    ```sudo systemctl daemon-reload```  
+    ```sudo systemctl restart nginx.service```
+
+
+  Для перезапуска, остановки, запуска, состояния сервера aiohttp (оповещение о платежах) использовать команды:  
+    ```systemctl restart payment_verification.service```  
+  ```systemctl stop payment_verification.service```  
+  ```systemctl start payment_verification.service```  
+  ```systemctl status payment_verification.service```  
+
+  При запуске сервера aiohttp, формируется БД "Prodamus\payments.sqlite3", и журнал логов "Prodamus\verif_pay.log".  
+  Для просмотра журнала в реальном времени использовать команду:  
+  ```tail -f Prodamus/verif_pay.log```  
+  Для просмотра БД использовать команду:    
+  ```sqlite3 Prodamus/payments.sqlite3```  
+  ```select * from payments;```  
+
+  Некоторые важные моменты.  
+    Для продамуса необходимо использовать SSL (httpS). Потому и формируем самоподписанные сертификаты SSL.  
+    В настройках Nginx "location /prodamus", путь "prodamus" не менять. Если меняете, то и меняйте в 
+  файле ".env" параметр "URL_BASE_DOMAIN=https://..IP...**/prodamus**".  
+
+  
   _Сделано:_
   - **формирование ссылки на оплату (файл "payment_link.py").**  
     Основные данные это:
@@ -26,7 +58,8 @@
       - Проверяем сообщения на сервере об оплате, и совпадения подписей.  
        
     Некоторые моменты.  
-      - Из файлов (payment_link, payment_verification) убраны все утилиты для формирования ссылки и подписи в файл "utils_prodamus.py".  
+      - Из файлов (payment_link, payment_verification) убраны все утилиты для формирования ссылки и
+    подписи в файл "utils_prodamus.py".  
       - Чтобы данные приходили к нам в формате json, не забывать при формирования ссылки в словаре "data"
     выставлять параметр **'callbackType': 'json'**
       - Также не забывать убрать демо режим **'demo_mode': 1**
@@ -34,7 +67,8 @@
   - **Заносим данные в БД SQLite об успешной оплате**  
     Из файла **"payment_verification.py"** вызывется метод **add_payments**. В нем вытаскиваем нужные ключи из 
    словаря данных и помещаем в кортеж. Далее этот кортеж помещаем в БД.  
-  Делаются некоторые проверки, такие как, если нет файла БД SQLite (то автоматом создается), проверка на кол-во переданных параметров.
+  Делаются некоторые проверки, такие как, если нет файла БД SQLite (то автоматом создается), проверка на кол-во
+  переданных параметров.
 
   _Необходимо сделать:_
    - ~~**Заносить данные в БД об успешной оплате**~~ сделано  

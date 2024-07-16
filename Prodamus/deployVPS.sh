@@ -16,7 +16,7 @@ sudo apt -y install sqlite3
 if [ -n "`dpkg -s nginx | grep 'Status' `" ]
 then
   echo
-  echo "=== Nginx установлен ==="
+  echo "=== Nginx уже стоит ==="
 else
   echo
   echo " === Установка Nginx === "

@@ -6,8 +6,7 @@
 - **"Prodamus"** - сервис оплаты.  
   Для быстрого развертывания на VPS, подключитесь к нему, выполните команду и следуйте инструкциям:  
   ```
-    wget -O ./deployVPS.sh https://raw.githubusercontent.com/Marat2010/botsAdmin/master/Prodamus/deployVPS.sh 
-  && chmod +x deployVPS.sh && ./deployVPS.sh
+    wget -O ./deployVPS.sh https://raw.githubusercontent.com/Marat2010/botsAdmin/master/Prodamus/deployVPS.sh && chmod +x deployVPS.sh && ./deployVPS.sh
     ```  
   Скрипт выполняет клонирование проекта с гитхаба, установку пакетов apt, пакетов из requirements.txt.  
   Далее запрашивает имя домена или IP адрес, секретный ключ продамуса, из этих данных формирует файл окружения ".env".  
